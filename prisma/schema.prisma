@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        String  @id @db.VarChar(100) @default(uuid())
+  nama      String  @db.VarChar(100)
+  email     String  @unique @db.VarChar(100)
+  telp      String  @unique @db.VarChar(100)
+  password  String  @db.VarChar(100)
+  alamat    Alamat @relation(fields: [alamat_id], references: [id])
+  alamat_id  String  @unique  // Mark as @unique
+  bank  Bank[]
+  @@map(name: "users")
+}
+
+model Alamat {
+  id        String @id @db.VarChar(100) @default(uuid())
+  desa      String @db.VarChar(100)
+  kecamatan String @db.VarChar(100)
+  kota      String @db.VarChar(100)
+  provinsi  String @db.VarChar(100)
+  kode_pos  String @db.VarChar(10)
+  user      User?  // No need to specify @relation here
+  @@map(name: "alamat")
+}
+
+enum namaBank {
+  BCA
+  BNI
+  BRI
+  MANDIRI
+}
+
+model Bank {
+  id        String @id @db.VarChar(100) @default(uuid())
+  nama_bank namaBank
+  no_rekening String @db.VarChar(100)
+  saldo Decimal @db.Decimal()
+  user User @relation(fields: [user_id], references: [id])
+  user_id String @unique
+  @@map(name:"akun_bank")
+
+}
+
+
