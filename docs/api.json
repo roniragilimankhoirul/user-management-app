@@ -1,0 +1,742 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "User Management App API",
+    "version": "1.0",
+    "contact": {
+      "name": "Roni Ragil Iman Khoirul",
+      "email": "ronisensei7@gmail.com",
+      "url": "https://www.linkedin.com/in/roni-ragil-iman-khoirul/"
+    }
+  },
+  "servers": [{ "url": "http://localhost:3000/" }],
+  "paths": {
+    "/api/users": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Get user data",
+        "description": "This API endpoint allows clients to retrieve user data from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "nama": { "type": "string", "example": "test" },
+                    "email": { "type": "string", "format": "email" },
+                    "telp": { "type": "string", "example": "081223443546" },
+                    "password": { "type": "string", "example": "test" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": ["user"],
+        "summary": "Create new user",
+        "description": "This API endpoint allows clients to create a new user account in the system",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "telp": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  }
+                },
+                "required": ["nama", "email", "telp", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Login existing user",
+        "description": "This API endpoint allows clients to login in the system",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success login existing user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          }
+        }
+      }
+    },
+    "/api/users/{userID}": {
+      "put": {
+        "tags": ["user"],
+        "summary": "Update user data",
+        "description": "This API endpoint allows clients to update the user's information",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "telp": { "type": "string" },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/userID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success update a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user"],
+        "summary": "Delete user",
+        "description": "This API endpoint allows clients to delete a user account",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/userID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      }
+    },
+    "/api/address": {
+      "get": {
+        "tags": ["address"],
+        "summary": "get user alamat",
+        "description": "This API endpoint allows clients to retrieve user address from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get user Alamat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "desa": { "type": "string" },
+                    "kecamatan": {
+                      "type": "string"
+                    },
+                    "kota": { "type": "string" },
+                    "provinsi": { "type": "string" },
+                    "kode_pos": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/AddressNotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": ["address"],
+        "summary": "create new user Alamat",
+        "description": "This API endpoint allows clients to create new Alamat to system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "desa": { "type": "string" },
+                  "kecamatan": {
+                    "type": "string"
+                  },
+                  "kota": { "type": "string" },
+                  "provinsi": { "type": "string" },
+                  "kode_pos": { "type": "string" }
+                },
+                "required": [
+                  "desa",
+                  "kecamatan",
+                  "kota",
+                  "provinsi",
+                  "kode_pos"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new user Alamat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User Alamat created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      }
+    },
+    "/api/address/{addressID}": {
+      "put": {
+        "tags": ["address"],
+        "summary": "update user alamat",
+        "description": "This API endpoint allows clients to update alamat from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/addressID"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "desa": { "type": "string" },
+                  "kecamatan": {
+                    "type": "string"
+                  },
+                  "kota": { "type": "string" },
+                  "provinsi": { "type": "string" },
+                  "kode_pos": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "update user alamat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user alamat updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/AddressNotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["address"],
+        "summary": "delete user alamat",
+        "description": "This API endpoint allows clients to delete alamat from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/addressID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete alamat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "user alamat deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/AddressNotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      }
+    },
+    "/api/bank-accounts": {
+      "get": {
+        "tags": ["bank-account"],
+        "summary": "get all user bank-account",
+        "description": "This API endpoint allows clients to retrieve user bank account from system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get user bank account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "nama_bank": {
+                        "type": "string",
+                        "enum": ["BCA", "BNI", "BRI", "MANDIRI"]
+                      },
+                      "no_rekening": { "type": "string" },
+                      "saldo": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/bankAccountNotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": ["bank-account"],
+        "summary": "create new user bank-account",
+        "description": "This API endpoint allows clients to create new bank-account to the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama_bank": {
+                    "type": "string",
+                    "enum": ["BCA", "BNI", "BRI", "MANDIRI"]
+                  },
+                  "no_rekening": { "type": "string" },
+                  "saldo": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create user new bank account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "bank-account created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      }
+    },
+    "/api/bank-accounts/{bank-acccountID}": {
+      "put": {
+        "tags": ["bank-account"],
+        "summary": "update user bank-account",
+        "description": "This API endpoint allows clients to update bank-account from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/bank-accountID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "saldo": {
+                    "type": "number"
+                  }
+                },
+                "required": ["saldo"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update bank-account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "bank-account updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/bankAccountNotFoundResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["bank-account"],
+        "summary": "delete user bank account",
+        "description": "This API endpoint allows clients to delete user back-account from the system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          },
+          {
+            "$ref": "#/components/parameters/bank-accountID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete user back account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "back account deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/bankAccountNotFoundResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "description": "JWT token for authentication",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "userID": {
+        "name": "userID",
+        "in": "path",
+        "description": "user ID for path parameters",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "addressID": {
+        "name": "addressID",
+        "in": "path",
+        "description": "alamat ID for path parameters",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "bank-accountID": {
+        "name": "bank-accountID",
+        "in": "path",
+        "description": "bank-accountID for path parameters",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "NotFoundResponse": {
+        "description": "Failed to find the requested resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User Not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddressNotFoundResponse": {
+        "description": "Failed to get Alamat",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Alamat not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "bankAccountNotFoundResponse": {
+        "description": "Failed to get bank-account",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "bank account not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotAuthorizedResponse": {
+        "description": "Unauthorized: The request lacks valid authentication credentials",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Not authorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
