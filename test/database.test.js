@@ -4,7 +4,7 @@ describe("Database Connection", () => {
   afterEach(async () => {
     await prismaClient.user.deleteMany({
       where: {
-        email: "test@test.com",
+        email: "test@teast.com",
       },
     });
   });
@@ -13,14 +13,14 @@ describe("Database Connection", () => {
     await prismaClient.user.create({
       data: {
         nama: "test",
-        email: "test@test.com",
-        telp: "082334738728",
-        password: "test",
+        email: "test@teast.com",
+        telp: "0823347398728",
+        password: "testtest",
       },
     });
     const result = await prismaClient.user.findUnique({
       where: {
-        email: "test@test.com",
+        email: "test@teast.com",
       },
     });
     expect(result).toBeDefined();

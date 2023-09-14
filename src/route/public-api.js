@@ -1,6 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import swagger from "../../docs/api.json" assert { type: "json" };
+// import swagger from "../../docs/api.json" assert { type: "json" };
+import userController from "../controller/user-controller.js";
 const publicRouter = new express.Router();
 
 publicRouter.get("/", (req, res) => {
@@ -8,6 +9,9 @@ publicRouter.get("/", (req, res) => {
     message: "Hello DOT",
   });
 });
-publicRouter.use("/api/docs", swaggerUi.serve);
-publicRouter.get("/api/docs", swaggerUi.setup(swagger));
+// publicRouter.use("/api/docs", swaggerUi.serve);
+// publicRouter.get("/api/docs", swaggerUi.setup(swagger));
+
+publicRouter.post("/api/users", userController.register);
+
 export { publicRouter };
