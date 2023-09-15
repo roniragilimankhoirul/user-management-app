@@ -1,6 +1,5 @@
 import Joi from "joi";
 
-// Define a custom validation function for numeric strings
 const isNumericString = (value, helpers) => {
   if (/^[0-9]+$/.test(value)) {
     return value;
@@ -21,4 +20,9 @@ const registerUserValidation = Joi.object({
   "string.numeric": "{{#label}} must only contain numeric characters",
 });
 
-export { registerUserValidation };
+const loginUserValidation = Joi.object({
+  email: Joi.string().email().max(100).required(),
+  password: Joi.string().min(6).max(100).required(),
+});
+
+export { registerUserValidation, loginUserValidation };

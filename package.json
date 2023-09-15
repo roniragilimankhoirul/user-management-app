@@ -10,7 +10,8 @@
     "dev": "nodemon src/index.js"
   },
   "jest": {
-    "collectCoverage": true,
+    "verbose": true,
+    "collectCoverage": false,
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     },
