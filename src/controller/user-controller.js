@@ -48,9 +48,26 @@ const update = async (req, res, next) => {
   }
 };
 
+const deleteUser = async (req, res, next) => {
+  try {
+    const email = req.decodeToken.email;
+    const id = req.params.id;
+    const request = {};
+    request.email = email;
+    request.id = id;
+    await userService.deleteUser(request);
+    res.status(200).json({
+      message: "user deleted succesfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   register,
   login,
   get,
   update,
+  deleteUser,
 };

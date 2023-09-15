@@ -40,9 +40,15 @@ const updateUserValidation = Joi.object({
   "string.numeric": "{{#label}} must only contain numeric characters",
 });
 
+const deleteUserValidation = Joi.object({
+  id: Joi.string().max(100).required(),
+  email: Joi.string().email().max(100).required(),
+});
+
 export {
   registerUserValidation,
   loginUserValidation,
   getUserValidation,
   updateUserValidation,
+  deleteUserValidation,
 };

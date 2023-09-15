@@ -171,7 +171,6 @@ describe("PUT /api/user/:id", () => {
       .send({
         nama: "roni",
       });
-    console.log(result);
     expect(result.status).toBe(200);
     expect(result.body.message).toBe("user updated succesfully");
   });
@@ -218,5 +217,43 @@ describe("PUT /api/user/:id", () => {
       });
     expect(result.status).toBe(200);
     expect(result.body.message).toBe("user updated succesfully");
+  });
+});
+
+describe("DELETE /api/user/:id", () => {
+  let userId;
+
+  beforeEach(async () => {
+    userId = await createUser();
+  });
+
+  afterEach(async () => {
+    await removeCreatedUser();
+  });
+
+  it("should successfully delete user", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/users/${userId}`)
+      .set("Authorization", token);
+
+    expect(result.status).toBe(200);
+  });
+
+  it("should successfully delete user", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@tst.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/users/${userId}`)
+      .set("Authorization", token);
+
+    expect(result.status).toBe(404);
   });
 });

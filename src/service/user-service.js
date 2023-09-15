@@ -1,6 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import {
+  deleteUserValidation,
   getUserValidation,
   loginUserValidation,
   registerUserValidation,
@@ -123,9 +124,29 @@ const update = async (request) => {
   });
 };
 
+const deleteUser = async (request) => {
+  request = validate(deleteUserValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  return prismaClient.user.deleteMany({
+    where: {
+      email: userInDatabase.email,
+    },
+  });
+};
+
 export default {
   register,
   login,
   get,
   update,
+  deleteUser,
 };
