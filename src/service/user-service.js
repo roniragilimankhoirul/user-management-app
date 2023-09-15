@@ -1,6 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import {
+  getUserValidation,
   loginUserValidation,
   registerUserValidation,
 } from "../validation/user-validation.js";
@@ -66,7 +67,17 @@ const login = async (request) => {
   }
 
   const secret = process.env.JWT_SECRET;
-  const token = jwt.sign({ userInDatabase }, secret, { expiresIn: "7d" });
+  const token = jwt.sign(
+    {
+      id: userInDatabase.id,
+      nama: userInDatabase.nama,
+      email: userInDatabase.email,
+    },
+    secret,
+    {
+      expiresIn: "7d",
+    }
+  );
   await prismaClient.user.findUnique({
     where: {
       email: userInDatabase.email,
@@ -75,7 +86,26 @@ const login = async (request) => {
   return token;
 };
 
+const get = async (user) => {
+  user = validate(getUserValidation, user);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user,
+    },
+  });
+
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  return await prismaClient.user.findUnique({
+    where: {
+      email: userInDatabase.email,
+    },
+  });
+};
+
 export default {
   register,
   login,
+  get,
 };

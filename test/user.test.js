@@ -1,6 +1,8 @@
 import supertest from "supertest";
 import { app } from "../src/application/app.js";
 import { createUser, removeCreatedUser } from "./test-util.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
@@ -83,7 +85,7 @@ describe("POST /api/users/login", () => {
 
   it("should reject login request because wrong email", async () => {
     const result = await supertest(app).post("/api/users/login").send({
-      email: "roni@gmail.com",
+      email: "tes@test.com",
       password: "testtest",
     });
     expect(result.status).toBe(401);
@@ -95,5 +97,54 @@ describe("POST /api/users/login", () => {
       password: "testtes",
     });
     expect(result.status).toBe(401);
+  });
+});
+
+describe("GET /api/users", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeCreatedUser();
+  });
+
+  it("should success get user data", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .get("/api/users")
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should failed get user data because user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@tst.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .get("/api/users")
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should failed get user data because invalid token", async () => {
+    const secret = "ss";
+    const token = jwt.sign({ email: "test@tst.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .get("/api/users")
+      .set("Authorization", token);
+    expect(result.status).toBe(498);
+  });
+
+  it("should failed get user data because token not found", async () => {
+    const result = await supertest(app)
+      .get("/api/users")
+      .set("Authorization", "");
+    expect(result.status).toBe(498);
   });
 });

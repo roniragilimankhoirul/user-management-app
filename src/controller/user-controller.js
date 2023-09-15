@@ -22,7 +22,18 @@ const login = async (req, res, next) => {
   }
 };
 
+const get = async (req, res, next) => {
+  try {
+    const user = req.decodeToken.email;
+    const result = await userService.get(user);
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   register,
   login,
+  get,
 };
