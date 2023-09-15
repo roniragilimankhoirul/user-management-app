@@ -148,3 +148,75 @@ describe("GET /api/users", () => {
     expect(result.status).toBe(498);
   });
 });
+
+describe("PUT /api/user/:id", () => {
+  let userId;
+
+  beforeEach(async () => {
+    userId = await createUser();
+  });
+
+  afterEach(async () => {
+    await removeCreatedUser();
+  });
+
+  it("should success update data", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .put(`/api/users/${userId}`)
+      .set("Authorization", token)
+      .send({
+        nama: "roni",
+      });
+    console.log(result);
+    expect(result.status).toBe(200);
+    expect(result.body.message).toBe("user updated succesfully");
+  });
+
+  it("should error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@tet.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .put(`/api/users/${userId}`)
+      .set("Authorization", token)
+      .send({
+        nama: "roni",
+      });
+    expect(result.status).toBe(404);
+  });
+
+  it("should error invalid tokem", async () => {
+    const secret = process.env.JWT_SECRET;
+    jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .put(`/api/users/${userId}`)
+      .set("Authorization", "ds")
+      .send({
+        nama: "roni",
+      });
+    expect(result.status).toBe(498);
+  });
+
+  it("should success update data telp & password", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .put(`/api/users/${userId}`)
+      .set("Authorization", token)
+      .send({
+        telp: "081223882887",
+        password: "hohohihe",
+      });
+    expect(result.status).toBe(200);
+    expect(result.body.message).toBe("user updated succesfully");
+  });
+});

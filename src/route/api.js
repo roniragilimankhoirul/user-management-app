@@ -6,5 +6,6 @@ const userRouter = new express.Router();
 
 userRouter.use(requireAuth);
 userRouter.get("/api/users", userController.get);
+userRouter.put("/api/users/:id", userController.update);
 
 export { userRouter };

@@ -32,8 +32,25 @@ const get = async (req, res, next) => {
   }
 };
 
+const update = async (req, res, next) => {
+  try {
+    const email = req.decodeToken.email;
+    const id = req.params.id;
+    const request = req.body;
+    request.email = email;
+    request.id = id;
+    await userService.update(request);
+    res.status(200).json({
+      message: "user updated succesfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   register,
   login,
   get,
+  update,
 };

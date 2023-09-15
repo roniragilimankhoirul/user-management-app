@@ -10,7 +10,7 @@ export const removeCreatedUser = async () => {
 };
 
 export const createUser = async () => {
-  await prismaClient.user.create({
+  const user = await prismaClient.user.create({
     data: {
       nama: "test",
       email: "test@test.com",
@@ -18,4 +18,5 @@ export const createUser = async () => {
       password: await bcrypt.hash("testtest", 10),
     },
   });
+  return user.id;
 };
