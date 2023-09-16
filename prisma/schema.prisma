@@ -44,10 +44,10 @@ enum namaBank {
 model Bank {
   id          String @id @db.VarChar(100) @default(uuid())
   nama_bank   namaBank
-  no_rekening String @db.VarChar(100)
-  saldo       Decimal @db.Decimal()
+  no_rekening String  @unique @db.VarChar(100)
+  saldo       Int @db.Integer
   user        User @relation(fields: [user_id], references: [id])
-  user_id     String @unique
+  user_id     String
   @@map(name:"akun_bank")
 
 }

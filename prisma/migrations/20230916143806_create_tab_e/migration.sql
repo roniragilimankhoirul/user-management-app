@@ -30,7 +30,7 @@ CREATE TABLE "akun_bank" (
     "id" VARCHAR(100) NOT NULL,
     "nama_bank" "namaBank" NOT NULL,
     "no_rekening" VARCHAR(100) NOT NULL,
-    "saldo" DECIMAL NOT NULL,
+    "saldo" INTEGER NOT NULL,
     "user_id" TEXT NOT NULL,
 
     CONSTRAINT "akun_bank_pkey" PRIMARY KEY ("id")
@@ -46,7 +46,7 @@ CREATE UNIQUE INDEX "users_telp_key" ON "users"("telp");
 CREATE UNIQUE INDEX "alamat_user_id_key" ON "alamat"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "akun_bank_user_id_key" ON "akun_bank"("user_id");
+CREATE UNIQUE INDEX "akun_bank_no_rekening_key" ON "akun_bank"("no_rekening");
 
 -- AddForeignKey
 ALTER TABLE "alamat" ADD CONSTRAINT "alamat_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

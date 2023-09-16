@@ -21,13 +21,13 @@ export const createUser = async () => {
   return user.id;
 };
 
-export const removeAddress = async (userId) => [
+export const removeAddress = async (userId) => {
   await prismaClient.alamat.deleteMany({
     where: {
       user_id: userId,
     },
-  }),
-];
+  });
+};
 
 export const createAddress = async (userId) => {
   const address = await prismaClient.alamat.create({
@@ -41,4 +41,12 @@ export const createAddress = async (userId) => {
     },
   });
   return address.id;
+};
+
+export const removeBankAccount = async (userId) => {
+  await prismaClient.bank.deleteMany({
+    where: {
+      user_id: userId,
+    },
+  });
 };
