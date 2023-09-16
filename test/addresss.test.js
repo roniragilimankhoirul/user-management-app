@@ -184,6 +184,25 @@ describe("PUT /api/address/:id", () => {
         kode_pos: "334243",
       });
     expect(result.status).toBe(200);
+    expect(result.body.message).toBe("User Address updated Successfully");
+  });
+  it("should error invalid request", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/address/${addressId}`)
+      .set("Authorization", token)
+      .send({
+        desa: 1212,
+        kecamatan: 212121,
+        provinsi: 212121,
+        kota: 21212,
+        kode_pos: "dsasda",
+      });
+    expect(result.status).toBe(400);
   });
 
   it("should error because user not found", async () => {
@@ -205,6 +224,54 @@ describe("PUT /api/address/:id", () => {
     await removeAddress(userId);
     const result = await supertest(app)
       .put(`/api/address/${addressId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+});
+
+describe("DELETE /api/address/:id", () => {
+  let userId;
+  let addressId;
+  beforeEach(async () => {
+    userId = await createUser();
+    addressId = await createAddress(userId);
+  });
+
+  afterEach(async () => {
+    await removeAddress(userId);
+    await removeCreatedUser();
+  });
+  it("should success delete user address", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/address/${addressId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should error because user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "est@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/address/${addressId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should error because address not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .delete(`/api/address/${addressId}c`)
       .set("Authorization", token);
     expect(result.status).toBe(404);
   });

@@ -1,6 +1,7 @@
 import { validate } from "../validation/validation.js";
 import {
   createAddressValidation,
+  deleteUserAdrressValidation,
   getAddressValidation,
   updateAddressValidation,
 } from "../validation/address-validation.js";
@@ -100,8 +101,37 @@ const update = async (request) => {
   });
 };
 
+const deleteAddress = async (request) => {
+  request = validate(deleteUserAdrressValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  const addressInDatabase = await prismaClient.alamat.findUnique({
+    where: {
+      id: request.id,
+    },
+  });
+
+  if (!addressInDatabase) {
+    throw new ResponseError(404, "Address Not Found");
+  }
+
+  return prismaClient.alamat.deleteMany({
+    where: {
+      id: addressInDatabase.id,
+    },
+  });
+};
+
 export default {
   create,
   get,
   update,
+  deleteAddress,
 };

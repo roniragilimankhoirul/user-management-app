@@ -31,8 +31,14 @@ const updateAddressValidation = Joi.object({
     .messages(zipErr),
 });
 
+const deleteUserAdrressValidation = Joi.object({
+  id: Joi.string().max(100).required(),
+  email: Joi.string().email().max(100).required(),
+});
+
 export {
   createAddressValidation,
   getAddressValidation,
   updateAddressValidation,
+  deleteUserAdrressValidation,
 };
