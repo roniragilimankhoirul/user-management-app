@@ -10,6 +10,7 @@ publicRouter.get("/", (req, res) => {
     message: "Hello DOT",
   });
 });
+
 // publicRouter.use("/api/docs", swaggerUi.serve);
 // publicRouter.get("/api/docs", swaggerUi.setup(swagger));
 

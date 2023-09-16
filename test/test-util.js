@@ -30,7 +30,7 @@ export const removeAddress = async (userId) => [
 ];
 
 export const createAddress = async (userId) => {
-  await prismaClient.alamat.create({
+  const address = await prismaClient.alamat.create({
     data: {
       desa: "test",
       kecamatan: "test",
@@ -40,4 +40,5 @@ export const createAddress = async (userId) => {
       user_id: userId,
     },
   });
+  return address.id;
 };

@@ -154,3 +154,58 @@ describe("GET /api/address", () => {
     expect(result.status).toBe(404);
   });
 });
+
+describe("PUT /api/address/:id", () => {
+  let userId;
+  let addressId;
+  beforeEach(async () => {
+    userId = await createUser();
+    addressId = await createAddress(userId);
+  });
+
+  afterEach(async () => {
+    await removeAddress(userId);
+    await removeCreatedUser();
+  });
+  it("should success update user address", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/address/${addressId}`)
+      .set("Authorization", token)
+      .send({
+        desa: "Gondang",
+        kecamatan: "Tulungagung",
+        provinsi: "Jawa Barat",
+        kota: "Malang",
+        kode_pos: "334243",
+      });
+    expect(result.status).toBe(200);
+  });
+
+  it("should error because user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@tst.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/address/${addressId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+  it("should error because user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    await removeAddress(userId);
+    const result = await supertest(app)
+      .put(`/api/address/${addressId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+});
