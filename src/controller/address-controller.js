@@ -12,6 +12,17 @@ const create = async (req, res, next) => {
   }
 };
 
+const get = async (req, res, next) => {
+  try {
+    const request = req.decodeToken.email;
+    const result = await addressService.get(request);
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
+  get,
 };

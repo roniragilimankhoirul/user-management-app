@@ -21,10 +21,23 @@ export const createUser = async () => {
   return user.id;
 };
 
-export const removeAddress = async () => [
+export const removeAddress = async (userId) => [
   await prismaClient.alamat.deleteMany({
     where: {
-      desa: "test",
+      user_id: userId,
     },
   }),
 ];
+
+export const createAddress = async (userId) => {
+  await prismaClient.alamat.create({
+    data: {
+      desa: "test",
+      kecamatan: "test",
+      kota: "test",
+      provinsi: "test",
+      kode_pos: "test",
+      user_id: userId,
+    },
+  });
+};

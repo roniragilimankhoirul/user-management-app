@@ -16,4 +16,6 @@ const createAddressValidation = Joi.object({
     .messages(zipErr),
 });
 
-export { createAddressValidation };
+const getAddressValidation = Joi.string().max(100).email().required();
+
+export { createAddressValidation, getAddressValidation };

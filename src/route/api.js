@@ -13,4 +13,5 @@ userRouter.delete("/api/users/:id", userController.deleteUser);
 
 // Address API
 userRouter.post("/api/address", addressController.create);
+userRouter.get("/api/address", addressController.get);
 export { userRouter };

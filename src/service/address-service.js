@@ -1,5 +1,8 @@
 import { validate } from "../validation/validation.js";
-import { createAddressValidation } from "../validation/address-validation.js";
+import {
+  createAddressValidation,
+  getAddressValidation,
+} from "../validation/address-validation.js";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 
@@ -32,6 +35,29 @@ const create = async (user, request) => {
   });
 };
 
+const get = async (request) => {
+  request = validate(getAddressValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  const addressInDatabase = await prismaClient.alamat.findUnique({
+    where: {
+      user_id: userInDatabase.id,
+    },
+  });
+  if (!addressInDatabase) {
+    throw new ResponseError(404, "Address Not Found");
+  }
+
+  return addressInDatabase;
+};
+
 export default {
   create,
+  get,
 };

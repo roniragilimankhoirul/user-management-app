@@ -1,16 +1,22 @@
-import { createUser, removeAddress, removeCreatedUser } from "./test-util.js";
+import {
+  createAddress,
+  createUser,
+  removeAddress,
+  removeCreatedUser,
+} from "./test-util.js";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import supertest from "supertest";
 import { app } from "../src/application/app.js";
 
 describe("POST /api/address", () => {
+  let userId;
   beforeEach(async () => {
-    await createUser();
+    userId = await createUser();
   });
 
   afterEach(async () => {
-    await removeAddress();
+    await removeAddress(userId);
     await removeCreatedUser();
   });
 
@@ -97,6 +103,54 @@ describe("POST /api/address", () => {
         provinsi: "test",
         kode_pos: "0000",
       });
+    expect(result.status).toBe(404);
+  });
+});
+
+describe("GET /api/address", () => {
+  let userId;
+  beforeEach(async () => {
+    userId = await createUser();
+    await createAddress(userId);
+  });
+
+  afterEach(async () => {
+    await removeAddress(userId);
+    await removeCreatedUser();
+  });
+  it("should success get user address", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/address`)
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should return error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "tet@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/address`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should return error alamat not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    await removeAddress(userId);
+    const result = await supertest(app)
+      .get(`/api/address`)
+      .set("Authorization", token);
     expect(result.status).toBe(404);
   });
 });
