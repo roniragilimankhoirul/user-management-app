@@ -15,7 +15,6 @@ describe("POST /api/users", () => {
       telp: "082334738728",
       password: "testtest",
     });
-
     expect(result.status).toBe(200);
   });
 
@@ -253,7 +252,6 @@ describe("DELETE /api/user/:id", () => {
     const result = await supertest(app)
       .delete(`/api/users/${userId}`)
       .set("Authorization", token);
-
     expect(result.status).toBe(404);
   });
 });

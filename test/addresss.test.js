@@ -1,0 +1,102 @@
+import { createUser, removeAddress, removeCreatedUser } from "./test-util.js";
+import "dotenv/config";
+import jwt from "jsonwebtoken";
+import supertest from "supertest";
+import { app } from "../src/application/app.js";
+
+describe("POST /api/address", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+
+  afterEach(async () => {
+    await removeAddress();
+    await removeCreatedUser();
+  });
+
+  it("should success create new user address", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .post(`/api/address`)
+      .set("Authorization", token)
+      .send({
+        desa: "test",
+        kecamatan: "test",
+        kota: "test",
+        provinsi: "test",
+        kode_pos: "0000",
+      });
+    expect(result.status).toBe(200);
+  });
+
+  it("should reject beacuse invalid request", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .post(`/api/address`)
+      .set("Authorization", token)
+      .send({
+        desa: "",
+        kecamatan: "",
+        kota: "",
+        provinsi: "",
+        kode_pos: "",
+      });
+    expect(result.status).toBe(400);
+  });
+
+  it("should reject request because address already exist", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    let result = await supertest(app)
+      .post(`/api/address`)
+      .set("Authorization", token)
+      .send({
+        desa: "test",
+        kecamatan: "test",
+        kota: "test",
+        provinsi: "test",
+        kode_pos: "0000",
+      });
+
+    result = await supertest(app)
+      .post(`/api/address`)
+      .set("Authorization", token)
+      .send({
+        desa: "test",
+        kecamatan: "test",
+        kota: "test",
+        provinsi: "test",
+        kode_pos: "0000",
+      });
+    expect(result.status).toBe(409);
+  });
+  it("should reject request because of user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@tesdt.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .post(`/api/address`)
+      .set("Authorization", token)
+      .send({
+        desa: "test",
+        kecamatan: "test",
+        kota: "test",
+        provinsi: "test",
+        kode_pos: "0000",
+      });
+    expect(result.status).toBe(404);
+  });
+});

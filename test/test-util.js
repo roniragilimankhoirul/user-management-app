@@ -20,3 +20,11 @@ export const createUser = async () => {
   });
   return user.id;
 };
+
+export const removeAddress = async () => [
+  await prismaClient.alamat.deleteMany({
+    where: {
+      desa: "test",
+    },
+  }),
+];

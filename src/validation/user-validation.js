@@ -1,11 +1,7 @@
 import Joi from "joi";
-
-const isNumericString = (value, helpers) => {
-  if (/^[0-9]+$/.test(value)) {
-    return value;
-  } else {
-    return helpers.error("string.numeric");
-  }
+import { isNumericString } from "../helper/validationHelper.js";
+const telpErr = {
+  "string.numeric": "telp must only contain numeric characters",
 };
 
 const registerUserValidation = Joi.object({
@@ -14,10 +10,9 @@ const registerUserValidation = Joi.object({
   telp: Joi.string()
     .max(100)
     .required()
-    .custom(isNumericString, "custom validation"),
+    .custom(isNumericString, "custom validation")
+    .messages(telpErr),
   password: Joi.string().min(6).max(100).required(),
-}).messages({
-  "string.numeric": "{{#label}} must only contain numeric characters",
 });
 
 const loginUserValidation = Joi.object({
@@ -34,10 +29,9 @@ const updateUserValidation = Joi.object({
   telp: Joi.string()
     .max(100)
     .optional()
-    .custom(isNumericString, "custom validation"),
+    .custom(isNumericString, "custom validation")
+    .messages(telpErr),
   password: Joi.string().min(6).max(100).optional(),
-}).messages({
-  "string.numeric": "{{#label}} must only contain numeric characters",
 });
 
 const deleteUserValidation = Joi.object({

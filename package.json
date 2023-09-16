@@ -5,13 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": false,
+    "collectCoverage": true,
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     },
