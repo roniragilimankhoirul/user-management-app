@@ -1,5 +1,6 @@
 import {
   createAddress,
+  createBankAccount,
   createUser,
   removeAddress,
   removeBankAccount,
@@ -95,5 +96,55 @@ describe("POST /api/bank-accounts", () => {
         saldo: 50000,
       });
     expect(result.status).toBe(409);
+  });
+});
+
+describe("GET /api/bank-accounts", () => {
+  let userId;
+  beforeEach(async () => {
+    userId = await createUser();
+    await createBankAccount(userId);
+  });
+
+  afterEach(async () => {
+    await removeBankAccount(userId);
+    await removeCreatedUser();
+  });
+
+  it("should success get user bank account", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/bank-accounts`)
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "tet@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/bank-accounts`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should error bank account not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    await removeBankAccount(userId);
+    const result = await supertest(app)
+      .get(`/api/bank-accounts`)
+      .set("Authorization", token);
+    console.log(result.body);
+    expect(result.status).toBe(404);
   });
 });

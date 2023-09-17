@@ -2,7 +2,7 @@ import express from "express";
 import { requireAuth } from "../middleware/auth-middleware.js";
 import userController from "../controller/user-controller.js";
 import addressController from "../controller/address-controller.js";
-import backAccountController from "../controller/back-account-controller.js";
+import bankAccountController from "../controller/bank-account-controller.js";
 
 const userRouter = new express.Router();
 
@@ -19,5 +19,6 @@ userRouter.put("/api/address/:id", addressController.update);
 userRouter.delete("/api/address/:id", addressController.deleteAddress);
 
 // Back Account API
-userRouter.post("/api/bank-accounts", backAccountController.create);
+userRouter.post("/api/bank-accounts", bankAccountController.create);
+userRouter.get("/api/bank-accounts", bankAccountController.get);
 export { userRouter };

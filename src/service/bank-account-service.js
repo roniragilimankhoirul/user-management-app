@@ -1,6 +1,9 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { createBankAccountValidation } from "../validation/bank-account-validation.js";
+import {
+  createBankAccountValidation,
+  getBankAccountValidation,
+} from "../validation/bank-account-validation.js";
 import { validate } from "../validation/validation.js";
 
 const create = async (user, request) => {
@@ -28,4 +31,26 @@ const create = async (user, request) => {
     data: request,
   });
 };
-export default { create };
+
+const get = async (user) => {
+  user = validate(getBankAccountValidation, user);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  const bankAccountInDatabase = await prismaClient.bank.findMany({
+    where: {
+      user_id: userInDatabase.id,
+    },
+  });
+  if (bankAccountInDatabase.length === 0) {
+    throw new ResponseError(404, "User Bank Account Not Found");
+  }
+
+  return bankAccountInDatabase;
+};
+export default { create, get };

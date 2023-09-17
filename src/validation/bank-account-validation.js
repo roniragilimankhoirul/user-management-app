@@ -19,4 +19,6 @@ const createBankAccountValidation = Joi.object({
   saldo: Joi.number().required(),
 });
 
-export { createBankAccountValidation };
+const getBankAccountValidation = Joi.string().max(100).email().required();
+
+export { createBankAccountValidation, getBankAccountValidation };

@@ -50,3 +50,15 @@ export const removeBankAccount = async (userId) => {
     },
   });
 };
+
+export const createBankAccount = async (userId) => {
+  const bankAccount = await prismaClient.bank.create({
+    data: {
+      nama_bank: "BCA",
+      no_rekening: "3526223465",
+      saldo: 50000,
+      user_id: userId,
+    },
+  });
+  return bankAccount.id;
+};
