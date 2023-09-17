@@ -3,6 +3,7 @@ import { ResponseError } from "../error/response-error.js";
 import {
   createBankAccountValidation,
   getBankAccountValidation,
+  getBankAccountValidationById,
 } from "../validation/bank-account-validation.js";
 import { validate } from "../validation/validation.js";
 
@@ -53,4 +54,26 @@ const get = async (user) => {
 
   return bankAccountInDatabase;
 };
-export default { create, get };
+
+const getById = async (request) => {
+  request = validate(getBankAccountValidationById, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  const bankAccountInDatabase = await prismaClient.bank.findUnique({
+    where: {
+      id: request.id,
+    },
+  });
+  if (!bankAccountInDatabase) {
+    throw new ResponseError(404, "User Bank Account Not Found");
+  }
+
+  return bankAccountInDatabase;
+};
+export default { create, get, getById };

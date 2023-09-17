@@ -22,4 +22,18 @@ const get = async (req, res, next) => {
   }
 };
 
-export default { create, get };
+const getById = async (req, res, next) => {
+  try {
+    const email = req.decodeToken.email;
+    const id = req.params.id;
+    const request = {};
+    request.email = email;
+    request.id = id;
+    const result = await bankAccountService.getById(request);
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { create, get, getById };

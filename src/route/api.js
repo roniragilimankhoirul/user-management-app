@@ -21,4 +21,5 @@ userRouter.delete("/api/address/:id", addressController.deleteAddress);
 // Back Account API
 userRouter.post("/api/bank-accounts", bankAccountController.create);
 userRouter.get("/api/bank-accounts", bankAccountController.get);
+userRouter.get("/api/bank-accounts/:id", bankAccountController.getById);
 export { userRouter };

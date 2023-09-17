@@ -144,7 +144,56 @@ describe("GET /api/bank-accounts", () => {
     const result = await supertest(app)
       .get(`/api/bank-accounts`)
       .set("Authorization", token);
-    console.log(result.body);
+
+    expect(result.status).toBe(404);
+  });
+});
+
+describe("GET /api/bank-accounts:id", () => {
+  let userId;
+  let bankaccountId;
+  beforeEach(async () => {
+    userId = await createUser();
+    bankaccountId = await createBankAccount(userId);
+  });
+
+  afterEach(async () => {
+    await removeBankAccount(userId);
+    await removeCreatedUser();
+  });
+
+  it("should success get user bank account by ID", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "tet@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .get(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should error bank account not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    const result = await supertest(app)
+      .get(`/api/bank-accounts/${bankaccountId}f`)
+      .set("Authorization", token);
     expect(result.status).toBe(404);
   });
 });
