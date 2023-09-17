@@ -45,7 +45,7 @@
           "404": {
             "$ref": "#/components/responses/NotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -105,8 +105,8 @@
               }
             }
           },
-          "404": {
-            "$ref": "#/components/responses/NotFoundResponse"
+          "400": {
+            "$ref": "#/components/responses/UserAlreadyExist"
           }
         }
       }
@@ -153,8 +153,8 @@
               }
             }
           },
-          "404": {
-            "$ref": "#/components/responses/NotFoundResponse"
+          "401": {
+            "$ref": "#/components/responses/incorrectLogin"
           }
         }
       }
@@ -210,7 +210,7 @@
           "404": {
             "$ref": "#/components/responses/NotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -247,7 +247,7 @@
           "404": {
             "$ref": "#/components/responses/NotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -287,7 +287,7 @@
           "404": {
             "$ref": "#/components/responses/AddressNotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -344,8 +344,11 @@
               }
             }
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictAlreadyExist"
           }
         }
       }
@@ -402,7 +405,7 @@
           "404": {
             "$ref": "#/components/responses/AddressNotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -439,7 +442,7 @@
           "404": {
             "$ref": "#/components/responses/AddressNotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -483,7 +486,7 @@
           "404": {
             "$ref": "#/components/responses/bankAccountNotFoundResponse"
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           }
         }
@@ -534,13 +537,55 @@
               }
             }
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictAlreadyExist"
           }
         }
       }
     },
     "/api/bank-accounts/{bank-acccountID}": {
+      "get": {
+        "tags": ["bank-account"],
+        "summary": "get all user bank-account",
+        "description": "This API endpoint allows clients to retrieve user bank account from system",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get user bank account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "nama_bank": {
+                      "type": "string",
+                      "enum": ["BCA", "BNI", "BRI", "MANDIRI"]
+                    },
+                    "no_rekening": { "type": "string" },
+                    "saldo": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/bankAccountNotFoundResponse"
+          },
+          "498": {
+            "$ref": "#/components/responses/NotAuthorizedResponse"
+          }
+        }
+      },
       "put": {
         "tags": ["bank-account"],
         "summary": "update user bank-account",
@@ -586,7 +631,7 @@
               }
             }
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           },
           "404": {
@@ -623,7 +668,7 @@
               }
             }
           },
-          "401": {
+          "498": {
             "$ref": "#/components/responses/NotAuthorizedResponse"
           },
           "404": {
@@ -673,6 +718,54 @@
       }
     },
     "responses": {
+      "incorrectLogin": {
+        "description": "Incorrect Login User",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "The email address or password is incorrect. Please retry..."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ConflictAlreadyExist": {
+        "description": " Already Exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Already Exist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserAlreadyExist": {
+        "description": " Error User Already Exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User with this email or telephone number already exists"
+                }
+              }
+            }
+          }
+        }
+      },
       "NotFoundResponse": {
         "description": "Failed to find the requested resource",
         "content": {
@@ -730,7 +823,7 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Not authorized"
+                  "example": "Invalid Token"
                 }
               }
             }
