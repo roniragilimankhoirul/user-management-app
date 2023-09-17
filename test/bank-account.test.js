@@ -265,3 +265,53 @@ describe("PUT /api/bank-accounts:id", () => {
     expect(result.status).toBe(404);
   });
 });
+
+describe("DELETE /api/bank-accounts:id", () => {
+  let userId;
+  let bankaccountId;
+  beforeEach(async () => {
+    userId = await createUser();
+    bankaccountId = await createBankAccount(userId);
+  });
+
+  afterEach(async () => {
+    await removeBankAccount(userId);
+    await removeCreatedUser();
+  });
+
+  it("should success delete user bank account by ID", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(200);
+  });
+
+  it("should error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "tst@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+
+  it("should error bank account not found not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .delete(`/api/bank-accounts/${bankaccountId}a`)
+      .set("Authorization", token);
+    expect(result.status).toBe(404);
+  });
+});

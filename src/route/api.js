@@ -23,4 +23,8 @@ userRouter.post("/api/bank-accounts", bankAccountController.create);
 userRouter.get("/api/bank-accounts", bankAccountController.get);
 userRouter.get("/api/bank-accounts/:id", bankAccountController.getById);
 userRouter.put("/api/bank-accounts/:id", bankAccountController.update);
+userRouter.delete(
+  "/api/bank-accounts/:id",
+  bankAccountController.deleteBankAccount
+);
 export { userRouter };

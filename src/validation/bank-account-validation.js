@@ -31,9 +31,15 @@ const updateBankAccountValidation = Joi.object({
   saldo: Joi.number().required(),
 });
 
+const deleteBankAccountValidation = Joi.object({
+  email: Joi.string().max(100).email().required(),
+  id: Joi.string().max(100).required(),
+});
+
 export {
   createBankAccountValidation,
   getBankAccountValidation,
   getBankAccountValidationById,
   updateBankAccountValidation,
+  deleteBankAccountValidation,
 };

@@ -3,6 +3,7 @@ import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import {
   createBankAccountValidation,
+  deleteBankAccountValidation,
   getBankAccountValidation,
   getBankAccountValidationById,
   updateBankAccountValidation,
@@ -106,4 +107,29 @@ const update = async (request) => {
     data: data,
   });
 };
-export default { create, get, getById, update };
+
+const deleteBankAccount = async (request) => {
+  request = validate(deleteBankAccountValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  const bankAccountInDatabase = await prismaClient.bank.findUnique({
+    where: {
+      id: request.id,
+    },
+  });
+  if (!bankAccountInDatabase) {
+    throw new ResponseError(404, "User Bank Account Not Found");
+  }
+  return prismaClient.bank.deleteMany({
+    where: {
+      id: bankAccountInDatabase.id,
+    },
+  });
+};
+export default { create, get, getById, update, deleteBankAccount };
