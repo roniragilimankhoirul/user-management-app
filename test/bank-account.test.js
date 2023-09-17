@@ -197,3 +197,71 @@ describe("GET /api/bank-accounts:id", () => {
     expect(result.status).toBe(404);
   });
 });
+
+describe("PUT /api/bank-accounts:id", () => {
+  let userId;
+  let bankaccountId;
+  beforeEach(async () => {
+    userId = await createUser();
+    bankaccountId = await createBankAccount(userId);
+  });
+
+  afterEach(async () => {
+    await removeBankAccount(userId);
+    await removeCreatedUser();
+  });
+
+  it("should success update user bank account by ID", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token)
+      .send({
+        saldo: 20000,
+      });
+    expect(result.status).toBe(200);
+  });
+
+  it("should error invalid request", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token)
+      .send({ saldo: "" });
+    expect(result.status).toBe(400);
+  });
+
+  it("should error user not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "tst@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+
+    const result = await supertest(app)
+      .put(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token)
+      .send({ saldo: "500000" });
+    expect(result.status).toBe(404);
+  });
+
+  it("should error bank acoount not found", async () => {
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ email: "test@test.com" }, secret, {
+      expiresIn: "7d",
+    });
+    await removeBankAccount(userId);
+    const result = await supertest(app)
+      .put(`/api/bank-accounts/${bankaccountId}`)
+      .set("Authorization", token)
+      .send({ saldo: "500000" });
+    expect(result.status).toBe(404);
+  });
+});

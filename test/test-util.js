@@ -55,7 +55,7 @@ export const createBankAccount = async (userId) => {
   const bankAccount = await prismaClient.bank.create({
     data: {
       nama_bank: "BCA",
-      no_rekening: "3526223465",
+      no_rekening: "353252352526223465",
       saldo: 50000,
       user_id: userId,
     },

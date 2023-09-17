@@ -1,9 +1,11 @@
+import { request } from "express";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import {
   createBankAccountValidation,
   getBankAccountValidation,
   getBankAccountValidationById,
+  updateBankAccountValidation,
 } from "../validation/bank-account-validation.js";
 import { validate } from "../validation/validation.js";
 
@@ -76,4 +78,32 @@ const getById = async (request) => {
 
   return bankAccountInDatabase;
 };
-export default { create, get, getById };
+
+const update = async (request) => {
+  request = validate(updateBankAccountValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+  const bankAccountInDatabase = await prismaClient.bank.findUnique({
+    where: {
+      id: request.id,
+    },
+  });
+  if (!bankAccountInDatabase) {
+    throw new ResponseError(404, "User Bank Account Not Found");
+  }
+  const data = {};
+  data.saldo = request.saldo;
+  return prismaClient.bank.update({
+    where: {
+      id: bankAccountInDatabase.id,
+    },
+    data: data,
+  });
+};
+export default { create, get, getById, update };

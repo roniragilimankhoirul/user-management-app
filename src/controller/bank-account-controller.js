@@ -36,4 +36,20 @@ const getById = async (req, res, next) => {
   }
 };
 
-export default { create, get, getById };
+const update = async (req, res, next) => {
+  try {
+    const email = req.decodeToken.email;
+    const id = req.params.id;
+    const request = req.body;
+    request.email = email;
+    request.id = id;
+    await bankAccountService.update(request);
+    res.status(200).json({
+      message: "User bank account updated successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { create, get, getById, update };
